@@ -13,3 +13,11 @@ CREATE TABLE IF NOT EXISTS card (
     set_id TEXT,
     FOREIGN KEY (set_id) REFERENCES sets(set_id)
 );
+
+BEGIN TRANSACTION;
+    ALTER TABLE "set" ADD COLUMN image_logo TEXT;
+COMMIT;
+
+BEGIN TRANSACTION;
+    ALTER TABLE "set" ADD COLUMN image_symbol TEXT;
+COMMIT;

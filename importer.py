@@ -1,9 +1,10 @@
 import base64
 import requests
+import sqlite3
 
 from pokemontcgsdk import RestClient, Card
 
-from drive_service import upload_to_google_drive
+from drive_service import upload_to_google_drive, download_from_google_drive
 from config import API_KEY, COLLECTION_SETS
 from database import connection
 
@@ -22,11 +23,17 @@ def __read_file__(file_path):
 
 def __update_database__(data):
     con = connection()
-    con.executescript(__read_file__('db/tables.sql'))
+    try:
+        con.executescript(__read_file__('db/tables.sql'))
+    except sqlite3.OperationalError as e:
+        if 'duplicate column name: ' not in str(e):
+            raise
     con.execute(__read_file__('db/insert_set.sql'), (
         data['set']['id'],
         data['set']['name'],
-        data['set']['series']
+        data['set']['series'],
+        data['set']['images']['symbol'],
+        data['set']['images']['logo']
         ))
     con.execute(__read_file__('db/insert_card.sql'), (
         data['id'],
@@ -56,6 +63,10 @@ def __get_cards__():
                     'id': card_data.set.id,
                     'name': card_data.set.name,
                     'series': card_data.set.series,
+                    'images': {
+                        'symbol': card_data.set.images.symbol,
+                        'logo': card_data.set.images.logo
+                    }
                 },
                 'eu_price': card_data.cardmarket.prices.averageSellPrice,
             }
@@ -63,5 +74,6 @@ def __get_cards__():
 
 
 if __name__ == "__main__":
+    download_from_google_drive()
     __get_cards__()
     upload_to_google_drive()

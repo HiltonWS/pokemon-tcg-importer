@@ -10,7 +10,8 @@ app = Flask(__name__)
 def get_cards_by_set(set_id):
     conn = connection()
     query = '''
-            SELECT card.*, "set".name as set_name, "set".series as set_series
+            SELECT card.*, "set".name as set_name, "set".series as set_series,
+            "set".image_logo as set_logo, "set".image_symbol as set_symbol
             FROM card
             JOIN "set" ON card.set_id = "set".id
             WHERE card.set_id = ?
@@ -23,8 +24,17 @@ def get_cards_by_set(set_id):
         card_dict['set'] = {
             'id': card_dict['set_id'],
             'name': card_dict['set_name'],
-            'series': card_dict['set_series']
+            'series': card_dict['set_series'],
+            'image': {
+                'logo': card_dict['set_logo'],
+                'symbol': card_dict['set_symbol']
+            }
         }
+        del card_dict['set_id']
+        del card_dict['set_name']
+        del card_dict['set_series']
+        del card_dict['set_logo']
+        del card_dict['set_symbol']
         cards_list.append(card_dict)
     return jsonify(cards_list)
 

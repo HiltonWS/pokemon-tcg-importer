@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "db/pokemon_cards.db",
+            "name": "db/pokemon_cards.db"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
