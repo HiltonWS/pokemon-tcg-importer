@@ -1,25 +1,15 @@
-from importer import (__url_content_to_base64__,
-                      __update_database__,
-                      __get_cards__
-                      )
-from pokemontcgsdk import Card
-from mock_db import get_mock_connection
-
+import sys
+import os
 import base64
 from unittest import mock
 import pytest
 import requests_mock
-import sys
-import os
 
-sys.path.insert(0,
-                os.path.abspath(
-                    os.path.join(
-                        os.path.dirname(__file__),
-                        '..'
-                        )
-                    )
-                )
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # noqa E501
+
+from importer import (__url_content_to_base64__, __update_database__, __get_cards__) # noqa E501, E402
+from pokemontcgsdk import Card # noqa E402
+from mock_db import get_mock_connection # noqa E402
 
 
 @pytest.fixture
