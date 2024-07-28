@@ -29,10 +29,10 @@ def __update_database__(data):
         data['set']['series']
         ))
     CONN.execute(__read_file__('db/insert_card.sql'), (
-        data['id'], 
-        data['number'], 
-        data['name'], 
-        data['image'], 
+        data['id'],
+        data['number'],
+        data['name'],
+        data['image'],
         data['rarity'],
         data['eu_price'],
         data['set']['id']
@@ -65,4 +65,3 @@ def __get_cards__():
 if __name__ == "__main__":
     __get_cards__()
     upload_to_google_drive()
-    
