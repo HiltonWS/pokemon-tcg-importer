@@ -7,20 +7,20 @@ from drive_service import upload_to_google_drive
 from config import API_KEY, COLLECTION_SETS
 from database import connection
 
-from googleapiclient.http import MediaFileUpload
-
 
 CONN = connection()
-
 RestClient.configure(API_KEY)
 
+
 def __url_content_to_base64__(url):
-        return base64.b64encode(requests.get(url).content).decode('utf-8')
+    return base64.b64encode(requests.get(url).content).decode('utf-8')
+
 
 def __read_file__(file_path):
-     with open(file_path, 'r') as sql_file:
-         return sql_file.read()
-    
+    with open(file_path, 'r') as sql_file:
+        return sql_file.read()
+
+
 def __update_database__(data):
     CONN.executescript(__read_file__('db/tables.sql'))
     CONN.execute(__read_file__('db/insert_set.sql'), (
@@ -39,6 +39,7 @@ def __update_database__(data):
         ))
     CONN.commit()
     CONN.close()
+
 
 def __get_cards__():
     for set in COLLECTION_SETS:
@@ -64,3 +65,4 @@ def __get_cards__():
 if __name__ == "__main__":
     __get_cards__()
     upload_to_google_drive()
+    

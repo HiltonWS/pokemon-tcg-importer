@@ -1,4 +1,6 @@
 from unittest import mock
+
+
 class MockConnection:
     def __init__(self):
         self.execute = mock.Mock()
@@ -8,6 +10,7 @@ class MockConnection:
 
     def cursor(self):
         return mock.Mock()
+
 
 def get_mock_connection():
     return MockConnection()

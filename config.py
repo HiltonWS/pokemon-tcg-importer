@@ -1,5 +1,5 @@
 import os
-import json 
+import json
 
 FOLDER_DATABASE_ID = os.getenv("FOLDER_DATABASE_ID")
 API_KEY = os.getenv("API_KEY")
