@@ -8,7 +8,6 @@ from config import API_KEY, COLLECTION_SETS
 from database import connection
 
 
-CONN = connection()
 RestClient.configure(API_KEY)
 
 
@@ -22,13 +21,14 @@ def __read_file__(file_path):
 
 
 def __update_database__(data):
-    CONN.executescript(__read_file__('db/tables.sql'))
-    CONN.execute(__read_file__('db/insert_set.sql'), (
+    con = connection()
+    con.executescript(__read_file__('db/tables.sql'))
+    con.execute(__read_file__('db/insert_set.sql'), (
         data['set']['id'],
         data['set']['name'],
         data['set']['series']
         ))
-    CONN.execute(__read_file__('db/insert_card.sql'), (
+    con.execute(__read_file__('db/insert_card.sql'), (
         data['id'],
         data['number'],
         data['name'],
@@ -37,8 +37,8 @@ def __update_database__(data):
         data['eu_price'],
         data['set']['id']
         ))
-    CONN.commit()
-    CONN.close()
+    con.commit()
+    con.close()
 
 
 def __get_cards__():

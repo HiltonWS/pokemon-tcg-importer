@@ -21,7 +21,7 @@ def mock_requests():
 @pytest.fixture
 def mock_db(mocker):
     mock_conn = get_mock_connection()
-    mocker.patch('importer.CONN', mock_conn)
+    mocker.patch('importer.connection', return_value=mock_conn)
     return mock_conn
 
 
