@@ -38,6 +38,7 @@ def __update_database__(data):
         data['set']['id']
         ))
     CONN.commit()
+    CONN.close()
 
 def __get_cards__():
     for set in COLLECTION_SETS:
@@ -59,9 +60,7 @@ def __get_cards__():
             }
             __update_database__(card)
 
-    CONN.close()
 
-
-
-__get_cards__()
-upload_to_google_drive()
+if __name__ == "__main__":
+    __get_cards__()
+    upload_to_google_drive()
