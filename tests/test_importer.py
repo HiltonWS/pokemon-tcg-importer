@@ -39,7 +39,11 @@ def test_update_database(mock_db, mocker):
         'set': {
             'id': 'set1',
             'name': 'Set Name',
-            'series': 'Series Name'
+            'series': 'Series Name',
+            'images': {
+                'logo': 'Logo URL',
+                'symbol': 'Symbol URL'
+                }
             },
         'id': 'card1',
         'number': '1',
