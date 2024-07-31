@@ -1,6 +1,7 @@
 from drive_service import download_from_google_drive
+from card_service import collected
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from database import connection
 
 app = Flask(__name__)
@@ -46,6 +47,13 @@ def get_sets():
     sets_list = [dict(ix) for ix in sets]
     conn.close()
     return jsonify(sets_list)
+
+# id, collected true/false
+@app.route('/collect_card/', methods=['POST'])
+def update_card():
+    print(request)
+    collected(request.json)
+    return jsonify(request.json)
 
 
 @app.route('/load_data', methods=['GET'])

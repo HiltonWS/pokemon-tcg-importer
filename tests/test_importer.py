@@ -7,7 +7,7 @@ import requests_mock
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # noqa E501
 
-from importer import (__url_content_to_base64__, __update_database__, __get_cards__) # noqa E501, E402
+from importer import (__url_content_to_base64__, __update_database__, __get_cards__, __init_database__) # noqa E501, E402
 from pokemontcgsdk import Card # noqa E402
 from mock_db import get_mock_connection # noqa E402
 
@@ -34,7 +34,7 @@ def test_url_content_to_base64(mock_requests):
 
 def test_update_database(mock_db, mocker):
     mock_conn = mock_db
-    mocker.patch('importer.__read_file__', return_value='SQL SCRIPT')
+    mocker.patch('importer.read_file', return_value='SQL SCRIPT')
     data = {
         'set': {
             'id': 'set1',
@@ -52,9 +52,8 @@ def test_update_database(mock_db, mocker):
         'rarity': 'Common',
         'eu_price': 1.0
         }
-    __update_database__(data)
+    __update_database__(mock_conn, data)
     assert mock_conn.execute.call_count == 2
-    assert mock_conn.executescript.call_count == 1
     mock_conn.commit.assert_called_once()
 
 
@@ -79,7 +78,11 @@ def test_get_cards(mock_db, mocker):
 
     mocker.patch('pokemontcgsdk.Card.where', return_value=[mock_card])
 
-    __get_cards__()
+    __get_cards__(mock_conn)
     assert mock_conn.execute.call_count > 0
     mock_conn.commit.assert_called_once()
-    mock_conn.close.assert_called_once()
+
+def test_init_database(mock_db):
+    mock_conn = mock_db
+    __init_database__(mock_conn)
+    assert mock_conn.executescript.call_count == 4
