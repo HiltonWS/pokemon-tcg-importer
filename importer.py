@@ -56,6 +56,7 @@ def __get_cards__(con):
     for set in COLLECTION_SETS:
         cards = Card.where(q="set.id:" + set, orderBy="number")
         for card_data in cards:
+            cardmarket = card_data.cardmarket
             card_data: Card = card_data
             card = {
                 'id': card_data.id,
@@ -72,7 +73,7 @@ def __get_cards__(con):
                         'logo': card_data.set.images.logo
                     }
                 },
-                'eu_price': card_data.cardmarket.prices.averageSellPrice,
+                'eu_price': cardmarket.prices.averageSellPrice if cardmarket else 0.00, # noqa E501
             }
             __update_database__(con, card)
 

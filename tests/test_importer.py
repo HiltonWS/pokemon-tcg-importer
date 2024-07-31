@@ -81,8 +81,33 @@ def test_get_cards(mock_db, mocker):
     __get_cards__(mock_conn)
     assert mock_conn.execute.call_count > 0
     mock_conn.commit.assert_called_once()
+    mock_conn.close.assert_called_once()
+
 
 def test_init_database(mock_db):
     mock_conn = mock_db
     __init_database__(mock_conn)
     assert mock_conn.executescript.call_count == 4
+
+
+def test_get_cards_without_cardmarket(mock_db, mocker):
+    mock_conn = mock_db
+    mock_card = mock.create_autospec(Card)
+    mock_card.id = 'card1'
+    mock_card.number = '1'
+    mock_card.name = 'Card Name'
+    mock_card.images = mock.Mock(large='image_url')
+    mock_card.rarity = 'Common'
+    mock_card.set = mock.Mock(
+        id='set1',
+        name='Set Name',
+        series='Series Name'
+    )
+
+    mocker.patch('pokemontcgsdk.Card.where', return_value=[mock_card])
+    mock_card.cardmarket = None
+
+    __get_cards__()
+    assert mock_conn.execute.call_count > 0
+    mock_conn.commit.assert_called_once()
+    mock_conn.close.assert_called_once()
