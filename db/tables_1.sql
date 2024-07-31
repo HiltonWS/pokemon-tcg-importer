@@ -1,0 +1,3 @@
+BEGIN;
+    ALTER TABLE "set" ADD COLUMN image_logo TEXT;
+COMMIT;

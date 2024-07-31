@@ -7,6 +7,7 @@ from pokemontcgsdk import RestClient, Card
 from drive_service import upload_to_google_drive, download_from_google_drive
 from config import API_KEY, COLLECTION_SETS
 from database import connection
+from file_service import read_file
 
 
 RestClient.configure(API_KEY)
@@ -16,26 +17,30 @@ def __url_content_to_base64__(url):
     return base64.b64encode(requests.get(url).content).decode('utf-8')
 
 
-def __read_file__(file_path):
-    with open(file_path, 'r') as sql_file:
-        return sql_file.read()
-
-
-def __update_database__(data):
-    con = connection()
+def __execute_script__(con, file):
     try:
-        con.executescript(__read_file__('db/tables.sql'))
+        con.executescript(read_file(file))
     except sqlite3.OperationalError as e:
         if 'duplicate column name: ' not in str(e):
             raise
-    con.execute(__read_file__('db/insert_set.sql'), (
+        else:
+            print(f"{e}")
+
+def __init_database__(con):
+    __execute_script__(con, "db/tables.sql")
+    __execute_script__(con, "db/tables_1.sql")
+    __execute_script__(con, "db/tables_2.sql")
+    __execute_script__(con, "db/tables_3.sql")
+
+def __update_database__(con, data):
+    con.execute(read_file('db/insert_set.sql'), (
         data['set']['id'],
         data['set']['name'],
         data['set']['series'],
         data['set']['images']['symbol'],
         data['set']['images']['logo']
         ))
-    con.execute(__read_file__('db/insert_card.sql'), (
+    con.execute(read_file('db/insert_card.sql'), (
         data['id'],
         data['number'],
         data['name'],
@@ -45,10 +50,9 @@ def __update_database__(data):
         data['set']['id']
         ))
     con.commit()
-    con.close()
 
 
-def __get_cards__():
+def __get_cards__(con):
     for set in COLLECTION_SETS:
         cards = Card.where(q="set.id:" + set, orderBy="number")
         for card_data in cards:
@@ -70,10 +74,13 @@ def __get_cards__():
                 },
                 'eu_price': card_data.cardmarket.prices.averageSellPrice,
             }
-            __update_database__(card)
+            __update_database__(con, card)
 
 
 if __name__ == "__main__":
     download_from_google_drive()
-    __get_cards__()
+    con = connection()
+    __init_database__(con)
+    __get_cards__(con)
+    con.close()
     upload_to_google_drive()
