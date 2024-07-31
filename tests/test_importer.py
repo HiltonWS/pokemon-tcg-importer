@@ -81,7 +81,6 @@ def test_get_cards(mock_db, mocker):
     __get_cards__(mock_conn)
     assert mock_conn.execute.call_count > 0
     mock_conn.commit.assert_called_once()
-    mock_conn.close.assert_called_once()
 
 
 def test_init_database(mock_db):
@@ -107,7 +106,6 @@ def test_get_cards_without_cardmarket(mock_db, mocker):
     mocker.patch('pokemontcgsdk.Card.where', return_value=[mock_card])
     mock_card.cardmarket = None
 
-    __get_cards__()
+    __get_cards__(mock_conn)
     assert mock_conn.execute.call_count > 0
     mock_conn.commit.assert_called_once()
-    mock_conn.close.assert_called_once()
