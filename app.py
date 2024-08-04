@@ -1,4 +1,4 @@
-from drive_service import download_from_google_drive
+from drive_service import download_from_google_drive, upload_to_google_drive
 from card_service import collected
 
 from flask import Flask, jsonify, request
@@ -54,6 +54,7 @@ def get_sets():
 def update_card():
     print(request)
     collected(request.json)
+    upload_to_google_drive()
     return jsonify(request.json)
 
 
