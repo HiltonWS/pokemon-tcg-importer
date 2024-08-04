@@ -48,6 +48,7 @@ def get_sets():
     conn.close()
     return jsonify(sets_list)
 
+
 # id, collected true/false
 @app.route('/collect_card/', methods=['POST'])
 def update_card():
