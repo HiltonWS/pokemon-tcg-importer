@@ -73,7 +73,7 @@ def __get_cards__(con):
                         'logo': card_data.set.images.logo
                     }
                 },
-                'eu_price': cardmarket.prices.averageSellPrice if cardmarket else 0.00, # noqa E501
+                'eu_price': cardmarket.prices.averageSellPrice if cardmarket and cardmarket.prices and cardmarket.prices.averageSellPrice else 0.00, # noqa E501
             }
             __update_database__(con, card)
 
